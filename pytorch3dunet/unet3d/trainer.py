@@ -225,6 +225,16 @@ class UNetTrainer:
                 # log stats, params and images
                 logger.info(
                     f'Training stats. Loss: {train_losses.avg}. Evaluation score: {train_eval_scores.avg}')
+                
+                # checkpoint_dirの中に新しくlogsディレクトリを作成して、その中にLossとEvaluation scoreを保存
+                log_dir = os.path.join(self.checkpoint_dir, 'logs')
+                os.makedirs(log_dir, exist_ok=True)
+                with open(os.path.join(log_dir, 'training_log.txt'), 'a') as f:
+                    f.write(f'Iteration: {self.num_iterations}, Loss: {train_losses.avg}, Evaluation score: {train_eval_scores.avg}\n')
+                
+                logger.info(
+                    f'LossとEvaluation scoreを{log_dir}に保存しました。')
+                
                 self._log_stats('train', train_losses.avg, train_eval_scores.avg)
                 # self._log_params()
                 self._log_images(input, target, output, 'train_')
@@ -280,6 +290,15 @@ class UNetTrainer:
 
             self._log_stats('val', val_losses.avg, val_scores.avg)
             logger.info(f'Validation finished. Loss: {val_losses.avg}. Evaluation score: {val_scores.avg}')
+            # checkpoint_dirの中に新しくlogsディレクトリを作成して、その中にLossとEvaluation scoreを保存
+            log_dir = os.path.join(self.checkpoint_dir, 'logs')
+            os.makedirs(log_dir, exist_ok=True)
+            with open(os.path.join(log_dir, 'validation_log.txt'), 'a') as f:
+                f.write(f'Iteration: {self.num_iterations}, Validation finished. Loss: {val_losses.avg}. Evaluation score: {val_scores.avg}\n')
+            
+            logger.info(
+                f'LossとEvaluation scoreを{log_dir}に保存しました。')
+            
             return val_scores.avg
 
     def _split_training_batch(self, t):

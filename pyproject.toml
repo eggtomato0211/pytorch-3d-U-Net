@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "pytorch3dunet"
+version = "0.1.0"
+description = "PyTorch 3D U-Net Implementation"
+authors = ["Adrian Wolny", "Lorenzo Cerrone"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+torch = {version = "*", source = "pytorch-cuda-121"}
+torchvision = {version = "*", source = "pytorch-cuda-121"}
+torchaudio = {version = "*", source = "pytorch-cuda-121"}
+tensorboard = "*"
+tqdm = "*"
+setuptools = "*"
+h5py = "*"
+scipy = "*"
+scikit-image = "*"
+pyyaml = "*"
+
+[[tool.poetry.source]]
+name = "pytorch-cuda-121"
+url = "https://download.pytorch.org/whl/cu121"
+priority = "explicit"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+
+[tool.poetry.scripts]
+train3dunet = "pytorch3dunet.train:main"
+predict3dunet = "pytorch3dunet.predict:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
