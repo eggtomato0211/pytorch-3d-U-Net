@@ -7,9 +7,10 @@ import copy
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # --- 事前準備 ---
+mode = "val"  # "train" or "test"
 yaml_path = r"C:\Users\Owner\mizusaki\pytorch-3dunet\resources\3DUnet_denoising\test_config_regression.yaml"
-base_path = r"C:\Users\Owner\mizusaki\3d-holography\app\python\3d-imaging\hdf\test250"
-destination_dir_base = r"C:\Users\Owner\mizusaki\3d-holography\app\python\3d-imaging\hdf\predictions"
+base_path = fr"C:\Users\Owner\mizusaki\3d-holography\app\python\3d-imaging\hdf\{mode}250"
+destination_dir_base = fr"C:\Users\Owner\mizusaki\3d-holography\app\python\3d-imaging\hdf\predictions_{mode}"
 checkpoint_base_path = r"C:\Users\Owner\mizusaki\pytorch-3dunet\checkpoint\32x32x128"
 
 file_prefix = "Number"
@@ -28,12 +29,7 @@ test_datasets = [os.path.join(base_path, f"{file_prefix}{i}{file_extension}") fo
 
 # 使用する model_name 設定
 model_names = [
-    "patch=128_stride=1_fm=16_valpatch=128",
-    "patch=128_stride=2_fm=16_valpatch=128",
-    "patch=128_stride=4_fm=16_valpatch=128",
-    "patch=128_stride=8_fm=16_valpatch=128",
-    "patch=128_stride=16_fm=16_valpatch=128",
-    "patch=128_stride=32_fm=16_valpatch=128",
+    "patch=64_stride=16_fm=16_valpatch=64",
 ]
 
 # 予測実行用の関数

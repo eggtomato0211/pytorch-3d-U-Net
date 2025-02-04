@@ -3,18 +3,18 @@ import yaml
 import subprocess
 
 # オリジナルの設定ファイル
-original_config = "train_config_regression.yaml"
+original_config = r"C:\Users\Owner\mizusaki\pytorch-3dunet\resources\3DUnet_denoising\train_config_regression.yaml"
 
 # `checkpoint_dir` のベースディレクトリ
 base_checkpoint_dir = r"C:\Users\Owner\mizusaki\pytorch-3dunet\checkpoint\32x32x128"
 # `train-yaml` のベースディレクトリ
-base_yaml_dir = r"C:\Users\Owner\mizusaki\pytorch-3dunet\train-yaml"
+base_yaml_dir = r"C:\Users\Owner\mizusaki\pytorch-3dunet\cs-13\train-yaml"
 
 # パラメータ設定
-patch_shape = [128, 128, 128]   # train 用の patch サイズ
-stride_shape = [32, 32, 32]     # train の stride
+patch_shape = [64, 64, 64]   # train 用の patch サイズ
+stride_shape = [48, 48, 48]     # train の stride
 val_patch_shape = [128, 128, 128]  # validation 用の patch サイズ
-f_maps = [64, 128, 256, 512]    # f_maps の設定
+f_maps =  [16, 32, 64, 128, 256]   # f_maps の設定 [16, 32, 64, 128, 256] [32, 64, 128, 256, 512] [64, 128, 256, 512, 1024]
 
 # `checkpoint_dir` と `yaml` の動的な名前
 config_name = f"patch={patch_shape[0]}_stride={stride_shape[0]}_fm={f_maps[0]}_valpatch={val_patch_shape[0]}"
@@ -42,4 +42,4 @@ with open(yaml_path, "w") as f:
     yaml.dump(config, f, default_flow_style=False)
 
 # `train3dunet` コマンドを実行
-subprocess.run(["train3dunet", "--config", yaml_path])
+subprocess.run(["poetry","run","train3dunet", "--config", yaml_path])
