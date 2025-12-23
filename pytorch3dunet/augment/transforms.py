@@ -752,6 +752,29 @@ class Transformer:
         aug_class = self._transformer_class(config['name'])
         return aug_class(**config)
 
+class AddGaussianNoise:
+    """入力されたNumpy配列にガウスノイズを追加するクラス"""
+    def __init__(self, random_state,mean=0.0, std=0.1, **kwargs):
+        assert random_state is not None, 'RandomState cannot be None'
+        self.random_state = random_state
+        self.mean = mean
+        self.std = std
+    
+    def __call__(self, m):
+        """
+
+        Args:
+            m (numpy.ndarray): 入力のNumpy配列
+        Returns:
+            numpy.ndarray: ガウスノイズが追加されたNumpy配列
+        """
+        # 指定された平均と標準偏差で、入力配列と全く同じ形状のノイズを生成
+        noise = self.random_state.normal(self.mean, self.std, m.shape)
+
+        #元の配列にノイズを加える
+        noisy_image = m + noise.astype(m.dtype)
+
+        return noisy_image
 
 def _recover_ignore_index(input, orig, ignore_index):
     if ignore_index is not None:
@@ -759,3 +782,5 @@ def _recover_ignore_index(input, orig, ignore_index):
         input[mask] = ignore_index
 
     return input
+
+

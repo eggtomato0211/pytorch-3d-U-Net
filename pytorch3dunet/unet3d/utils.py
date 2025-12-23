@@ -49,7 +49,7 @@ def load_checkpoint(checkpoint_path, model, optimizer=None,
         raise IOError(f"Checkpoint '{checkpoint_path}' does not exist")
 
     state = torch.load(checkpoint_path, map_location='cpu')
-    model.load_state_dict(state[model_key])
+    model.load_state_dict(state[model_key], strict=False)
 
     if optimizer is not None:
         optimizer.load_state_dict(state[optimizer_key])

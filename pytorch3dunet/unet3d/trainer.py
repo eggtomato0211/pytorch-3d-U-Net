@@ -114,12 +114,12 @@ class UNetTrainer:
         else:
             self.best_eval_score = float('+inf')
 
-        self.writer = SummaryWriter(
-            log_dir=os.path.join(
-                checkpoint_dir, 'logs', 
-                datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-                )
-            )
+        log_dir = os.path.join(
+            checkpoint_dir, 'logs',
+            datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        )
+        os.makedirs(log_dir, exist_ok=True)
+        self.writer = SummaryWriter(log_dir=log_dir)
 
         assert tensorboard_formatter is not None, 'TensorboardFormatter must be provided'
         self.tensorboard_formatter = tensorboard_formatter

@@ -1,0 +1,148 @@
+# ===== モデル設定 =====
+model:
+  # モデルのクラス名 (例: UNet3D, ResidualUNet3D)
+  name: UNet3D
+  # モデルへの入力チャンネル数 (グレースケールなので1)
+  in_channels: 1
+  # モデルの出力チャンネル数 (グレースケールなので1)
+  out_channels: 1
+  # 単一レイヤー内の演算の順番
+  layer_order: gcr
+  # U-Netの各階層での特徴マップ数
+  f_maps: [64, 128, 256, 512, 1024]
+  # グループノルムのグループ数
+  num_groups: 8
+  # trueならセグメンテーション用の最終活性化層を適応
+  # falseなら回帰問題(ノイズ除去など)用の設定になる
+  is_segmentation: false
+
+# ===== トレーナー設定 =====
+trainer:
+  # 学習済みモデル(チェックポイント)を保存するフォルダのパス
+  checkpoint_dir: "../outputs/exp001_denoising"
+  # 学習を再開するための最新チェックポイントのパス(今回は使わない)
+  resume: null
+  # 事前学習済みモデルのパス(ファインチューニングに使用する場合)
+  pre_trained: null
+  # 検証を行うイテレーション間隔 (1000回学習ごとに性能評価)
+  validate_after_iters: 1000
+  # TensorBoardにログを記録するイテレーション間隔
+  log_after_iters: 100
+  # 最大エポック数 (データセット全体を何周学習するか)
+  max_num_epochs: 1000
+  # 最大イテレーション数 (バッチ学習を何回行うか)
+  max_num_iterations: 10000000
+  # 評価指標のスコアが高いほど良いモデルとみなすかどうか
+  eval_score_higher_is_better: true
+  # 計算に使うデバイス
+  device: "cuda"
+
+# ===== 最適化手法の設定 =====
+optimizer:
+  # 初期学習率
+  learning_rate: 0.0002
+  # 重み減衰 (過学習を抑制する)
+  weight_decay: 0.00001
+
+# ===== 損失関数の設定 =====
+loss:
+  # 学習に使用する損失関数
+  name: SmoothL1Loss
+  # 無視するターゲット値 (今回は使わない)
+  ignore_index: null
+
+# ===== 評価指標の設定 =====
+eval_metric:
+  # モデルの性能を測る評価指標の名前
+  name: PSNR
+  # 評価時に無視するターゲットラベル (今回は使わない)
+  ignore_index: null
+
+# ===== 学習率スケジューラの設定 =====
+lr_scheduler:
+  # 評価指標が改善しなくなった時に学習率を下げる
+  name: ReduceLROnPlateau
+  # 'max' (スコアが高い方が良い) か 'min' を指定
+  mode: max
+  # 学習率を減少させる係数 (新しい学習率 = 現在の学習率 * factor)
+  factor: 0.1
+  # 評価指標が改善しないのを何回許容するか
+  patience: 10
+
+# ===== データローダーの設定 =====
+loaders:
+  # 使用するHDF5データセットのクラス名
+  dataset: StandardHDF5Dataset
+  # バッチサイズ (一度に処理するデータ数)
+  batch_size: 2
+  # データ読み込みに使うCPUプロセス数
+  num_workers: 4
+  # HDF5ファイル内のRAWデータへのパス
+  raw_internal_path: raw
+  # HDF5ファイル内のラベルデータへのパス
+  label_internal_path: label
+  # 重みマップのパス (今回は使わない)
+  weight_internal_path: null
+
+  # --- 学習用ローダーの設定 ---
+  train:
+    # 学習用データのファイルパス
+    file_paths:
+      - 'C:/Users/Owner/mizusaki/pytorch-3dunet/project/data/train'
+
+    # --- パッチの切り出し方の設定 ---
+    slice_builder:
+      name: SliceBuilder
+      # 学習用に使うパッチのサイズ (奥行, 高さ, 幅)
+      patch_shape: [128, 128, 128]
+      # パッチを切り出す際のストライド (奥行, 高さ, 幅)
+      stride_shape: [16, 16, 16]
+
+    # --- データ拡張の設定 ---
+    transformer:
+      raw:
+        - name: Normalize
+        - name: RandomFlip
+        - name: RandomRotate90
+        - name: RandomRotate
+          axes: [[2, 1]]
+          angle_spectrum: 30
+          mode: reflect
+       # - name: AddGaussianNoise
+       #   std: 0.1  # ノイズの強さ(標準偏差)をここで調整
+        - name: ToTensor
+          expand_dims: true
+        
+      label:
+        - name: Normalize
+        - name: RandomFlip
+        - name: RandomRotate90
+        - name: RandomRotate
+          axes: [[2, 1]]
+          angle_spectrum: 30
+          mode: reflect
+        - name: ToTensor
+          expand_dims: true
+        
+
+  # --- 検証用ローダーの設定 ---
+  val: 
+    # 検証用データのファイルパス
+    file_paths:
+      - 'C:/Users/Owner/mizusaki/pytorch-3dunet/project/data/val'
+
+    slice_builder:
+      name: SliceBuilder
+      patch_shape: [128, 128, 128]
+      stride_shape: [128, 128, 128]
+    
+    # 検証時はランダムなデータ拡張を行わない
+    transformer:
+      raw:
+        - name: Normalize
+        - name: ToTensor
+          expand_dims: true
+      label:
+        - name: Normalize
+        - name: ToTensor
+          expand_dims: true

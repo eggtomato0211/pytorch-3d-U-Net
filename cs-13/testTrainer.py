@@ -23,7 +23,7 @@ def compute_psnr(gt, pred):
 def main():
     # === 設定ファイルとチェックポイントのパスを指定 ===
     config_path = r'C:\Users\Owner\mizusaki\pytorch-3dunet\cs-13\train-yaml\patch=64_stride=48_fm=16_valpatch=128.yaml'
-    best_checkpoint_path = r'C:\Users\Owner\mizusaki\pytorch-3dunet\checkpoint\32x32x128\patch=64_stride=48_fm=16_valpatch=128\best_checkpoint.pytorch'
+    best_checkpoint_path = r'C:\Users\Owner\mizusaki\pytorch-3dunet\cs-13\train-yaml\patch=64_stride=48_fm=16_valpatch=128.yaml'
     
     # YAML 設定ファイルを読み込む
     with open(config_path, 'r') as f:

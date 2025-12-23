@@ -42,7 +42,7 @@ def load_config():
 
     args = parser.parse_args()
     config_path = args.config
-    config = yaml.safe_load(open(config_path, 'r'))
+    config = yaml.safe_load(open(config_path, 'r', encoding='utf-8'))
     _override_config(args, config)
 
     device = config.get('device', None)

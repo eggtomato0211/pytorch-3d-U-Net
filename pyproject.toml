@@ -17,6 +17,7 @@ h5py = "*"
 scipy = "*"
 scikit-image = "*"
 pyyaml = "*"
+lpips = "^0.1.4"
 
 [[tool.poetry.source]]
 name = "pytorch-cuda-121"
