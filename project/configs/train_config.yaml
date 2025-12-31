@@ -1,5 +1,5 @@
 device: "cuda"
-model_path: "D:/nosaka/checkpoint/holography_noisy/best_checkpoint.pytorch"
+model_path: "D:/nosaka/checkpoint/holography_misty/best_checkpoint.pytorch"
 model:
   name: UNet3D
   in_channels: 1
@@ -9,7 +9,7 @@ model:
   num_groups: 8
   is_segmentation: false
 trainer:
-  checkpoint_dir: "D:/nosaka/checkpoint/holography_noisy"
+  checkpoint_dir: "D:/nosaka/checkpoint/holography_misty"
   resume: null
   pre_trained: null
   validate_after_iters: 200
@@ -42,7 +42,7 @@ loaders:
   output_dir: "D:/nosaka/outputs/predict/holography_noisy"
   train:
     file_paths:
-      - "D:/nosaka/data/3d-holography_output/Train_misty"
+      - "D:\\nosaka\\data\\3d-holography_output\\Train_misty_random_20251226_1354"
     slice_builder:
       name: SliceBuilder
       patch_shape: [128, 128, 128]
@@ -60,7 +60,7 @@ loaders:
           expand_dims: true
   val:
     file_paths:
-      - "D:/nosaka/data/3d-holography_output/Val_misty"
+      - "D:/nosaka/data/3d-holography_output/Val_misty_20251226_1354"
     slice_builder:
       name: SliceBuilder
       patch_shape: [128, 128, 128]
@@ -74,7 +74,7 @@ loaders:
           expand_dims: true
   test:
     file_paths:
-      - "D:/nosaka/data/3d-holography_output/Test"
+      - "D:/nosaka/data/3d-holography_output/Test_misty_20251226_1354"
     slice_builder:
       name: SliceBuilder
       patch_shape: [128, 128, 128]
